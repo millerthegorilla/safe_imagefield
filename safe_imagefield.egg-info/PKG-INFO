@@ -1,0 +1,42 @@
+Metadata-Version: 2.1
+Name: safe-imagefield
+Version: 1.0
+Summary: A Django app that subclasses django's image field, adding methods to validate the image
+Home-page: https://github.com/millerthegorilla/safe_imagefield
+Author: James Miller
+Author-email: jamesstewartmiller@gmail.com
+License: MiT  # Example license
+Platform: UNKNOWN
+Classifier: Environment :: Web Environment
+Classifier: Framework :: Django
+Classifier: Framework :: Django :: 3.2  # Replace "X.Y" as appropriate
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content
+Requires-Python: >=3.8
+Description-Content-Type: 'text/markdown'
+License-File: LICENSE
+
+# safe_imagefield
+a django app that subclasses imagefield and that validates images in a number of ways.  It is a fork of safefilefield by vladislav bakin https://pypi.org/project/django-safe-filefield/
+
+## validators
+* FileExtensionValidator - validates file to check that its extension matches a list of allowed extensions.
+                           pass the list of extensions when you add the validator
+* FileContentTypeValidator - validates the content of the file against its guessed type and its extension.
+* AntiVirusValidator - scans the file with clamav.  settings.CLAMAV_SOCKET specifies the webaddress or socket 
+                       that clamav is on eg 'tcp://127.0.0.1:3310'.  settings.CLAMAV_TIMEOUT specifies a maximum amount of time before the scan times out.
+* MediaIntegrityValidator - runs a few simple checks to confirm that the integrity of the file is good.  You can pass 'error_detect' as 'default' or 'strict' to the constructor.  Defaults to default.  Strict is a stricter check.
+* MaxSizeValidator - validates the file size against a max_size of bytes.
+
+This app is still being tested, so I can't give any guarantees as to its effectiveness.  Tests are untested currently.
+
+Todo - add image files for tests.
+
