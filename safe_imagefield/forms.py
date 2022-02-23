@@ -2,7 +2,7 @@ from django import forms
 
 from . import validators
 
-from typing import cast
+import typing
 
 
 class SafeImageField(forms.ImageField):
@@ -23,21 +23,21 @@ class SafeImageField(forms.ImageField):
 
         if self.allowed_extensions:
             default_validators.append(
-                cast(object, validators.FileExtensionValidator(self.allowed_extensions))
+                typing.cast(object, validators.FileExtensionValidator(self.allowed_extensions))
             )
 
         if self.check_content_type:
-            default_validators.append(cast(object, validators.FileContentTypeValidator()))
+            default_validators.append(typing.cast(object, validators.FileContentTypeValidator()))
 
         if self.scan_viruses:
-            default_validators.append(cast(object, validators.AntiVirusValidator()))
+            default_validators.append(typing.cast(object, validators.AntiVirusValidator()))
 
         if self.media_integrity:
-            default_validators.append(cast(object, validators.MediaIntegrityValidator()))
+            default_validators.append(typing.cast(object, validators.MediaIntegrityValidator()))
 
         if self.max_size_limit:
             default_validators.append(
-                cast(object, validators.MaxSizeValidator(max_size=self.max_size_limit)))
+                typing.cast(object, validators.MaxSizeValidator(max_size=self.max_size_limit)))
 
         self.default_validators = default_validators + self.default_validators
 
