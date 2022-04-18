@@ -179,7 +179,11 @@ class MaxSizeValidator(object):
             self.max_size = max_size
 
     def __call__(self, file):
-        if file.size > self.max_size:
+        if not str(self.max_size).isdigit():
+            max_size = utils.convert_to_bytes(self.max_size)
+        else:
+            max_size = self.max_size
+        if file.size > max_size:
             raise exceptions.ValidationError(
                 self.message, code=self.error_code, params={
                     'max_size': str(

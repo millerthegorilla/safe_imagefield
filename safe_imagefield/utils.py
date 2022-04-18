@@ -38,10 +38,31 @@ def pil_check(file) -> None:
 
 
 def convert_size(size_bytes) -> str:
-    if size_bytes == 0:
-        return "0B"
-    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-    i = int(math.floor(math.log(size_bytes, 1024)))
-    p = math.pow(1024, i)
-    s = round(size_bytes / p, 2)
-    return "%s %s" % (s, size_name[i])
+    breakpoint()
+    if str(size_bytes).isdigit():
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return "%s %s" % (s, size_name[i])
+    else:
+        return size_bytes
+
+def convert_to_bytes(max_size_string) -> int:
+    if max_size_string.isdigit():
+        return max_size_string
+    else:
+        desc = max_size_string[-2:]
+        size = float(max_size_string[:-2])
+        match desc.lower():
+            case 'kb':
+                max_size = size * 1024
+            case 'mb':
+                max_size = size * 1048576
+            case 'gb':
+                max_size = size * 1073741824
+            case _:
+                raise AttributeError('Unable to convert max upload size specifier')
+        return int(math.ceil(max_size))
