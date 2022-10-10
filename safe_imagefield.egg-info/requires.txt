@@ -1,6 +1,6 @@
-Django>=3.2
-ffmpeg==1.4
-Pillow==8.2.0
-clamd==1.0.2
-python-magic==0.4.25
-pytest==7.0.1
+Django>=4.1
+ffmpeg>=1.4
+Pillow>=8.2.0
+clamd>=1.0.2
+python-magic>=0.4.25
+pytest>=7.0.1
