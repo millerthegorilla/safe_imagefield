@@ -5,7 +5,7 @@ from django.utils import translation
 from . import clamav, utils
 
 
-logger = logging.getLogger("safe_imagefield")
+logger = logging.getLogger('safe_imagefield')
 
 
 # class FileNameValidator(object):
@@ -25,13 +25,12 @@ logger = logging.getLogger("safe_imagefield")
 
 # TODO do I need to call the superclass of object in each validator init??
 
-
 class FileExtensionValidator(object):
     message = translation.gettext_lazy(
         "File extension '%(extension)s' is not allowed. "
         "Allowed extensions are: '%(allowed_extensions)s'."
     )
-    error_code = "invalid_extension"
+    error_code = 'invalid_extension'
 
     def __init__(self, allowed_extensions=None, message=None, error_code=None) -> None:
         self.allowed_extensions = allowed_extensions
@@ -45,27 +44,25 @@ class FileExtensionValidator(object):
     def __call__(self, value):
         extension = os.path.splitext(value.name)[1][1:].lower()
 
-        if (
-            self.allowed_extensions is not None
-            and extension not in self.allowed_extensions
-        ):
+        if self.allowed_extensions is not None and extension not in self.allowed_extensions:
             raise exceptions.ValidationError(
                 self.message,
                 code=self.error_code,
                 params={
-                    "extension": extension,
-                    "allowed_extensions": ", ".join(self.allowed_extensions),
-                },
+                    'extension': extension,
+                    'allowed_extensions': ', '.join(
+                        self.allowed_extensions)
+                }
             )
 
 
 class FileContentTypeValidator(object):
     message = translation.gettext_lazy(
-        "File has invalid content-type. "
-        "Maybe the file extension does not match the file content?"
+        'File has invalid content-type. '
+        'Maybe the file extension does not match the file content?'
     )
 
-    error_code = "invalid_content_type"
+    error_code = 'invalid_content_type'
 
     def __init__(self, message=None, error_code=None) -> None:
         if message is not None:
@@ -79,39 +76,45 @@ class FileContentTypeValidator(object):
 
         # TODO:  Update below code to match imagefile.
         detected_content_type = utils.detect_content_type(file)
-        mimetypes.add_type("image/webp", ".webp", strict=True)
-        if getattr(file, "content_type", None) is not None:
+        mimetypes.add_type('image/webp', '.webp', strict=True)
+        if getattr(file, 'content_type', None) is not None:
             is_valid_content_type = bool(
                 (
-                    ext in mimetypes.guess_all_extensions(detected_content_type)
+                    ext in mimetypes.guess_all_extensions(
+                        detected_content_type)
                     and ext in mimetypes.guess_all_extensions(file.content_type)
                 )
             )
             params = {
-                "extension": ext,
-                "content_type": file.content_type,
-                "detected_content_type": detected_content_type,
+                'extension': ext,
+                'content_type': file.content_type,
+                'detected_content_type': detected_content_type
             }
         else:
             is_valid_content_type = bool(
-                (ext in mimetypes.guess_all_extensions(detected_content_type))
+                (
+                    ext in mimetypes.guess_all_extensions(
+                        detected_content_type)
+                )
             )
             params = {
-                "extension": ext,
-                "content_type": None,
-                "detected_content_type": detected_content_type,
+                'extension': ext,
+                'content_type': None,
+                'detected_content_type': detected_content_type
             }
 
         if not is_valid_content_type:
             raise exceptions.ValidationError(
-                self.message, code=self.error_code, params=params
+                self.message,
+                code=self.error_code,
+                params=params
             )
 
 
 class AntiVirusValidator(object):
-    message = translation.gettext_lazy("File is infected with %(virus)s.")
+    message = translation.gettext_lazy('File is infected with %(virus)s.')
 
-    error_code = "infected"
+    error_code = 'infected'
 
     def __init__(self, message=None, error_code=None) -> None:
         if message is not None:
@@ -122,19 +125,23 @@ class AntiVirusValidator(object):
 
     def __call__(self, file):
         status, virus_name = clamav.scan_file(file)
-        if status != "OK":
+        if status != 'OK':
             raise exceptions.ValidationError(
-                self.message, code=self.error_code, params={"virus": virus_name}
+                self.message,
+                code=self.error_code,
+                params={
+                    'virus': virus_name
+                }
             )
 
 
 class MediaIntegrityValidator(object):
     # error_detect can be 'default' or 'strict'
-    message = translation.gettext_lazy("File failed integrity check! %(error)s")
+    message = translation.gettext_lazy('File failed integrity check! %(error)s')
 
-    error_code = "integrity_failure"
+    error_code = 'integrity_failure'
 
-    def __init__(self, message=None, error_code=None, error_detect="default") -> None:
+    def __init__(self, message=None, error_code=None, error_detect='default') -> None:
         if message is not None:
             self.message = message
 
@@ -144,23 +151,22 @@ class MediaIntegrityValidator(object):
         self.error_detect = error_detect
 
     def __call__(self, file):
-        content_type = utils.detect_content_type(file).split("/")[0]
-        if content_type == "video":
+        content_type = utils.detect_content_type(file).split('/')[0]
+        if content_type == 'video':
             utils.ffmpeg_check(file, self.error_detect)
-        elif content_type == "image":
+        elif content_type == 'image':
             try:
                 utils.pil_check(file)
             except Exception as e:
                 logger.error("PIL CHECK ERROR : {0}".format(e))
                 raise exceptions.ValidationError(
-                    self.message, code=self.error_code, params={"error": str(e)}
-                )
+                    self.message, code=self.error_code, params={'error': str(e)})
 
 
 class MaxSizeValidator(object):
-    message = translation.gettext_lazy("File is greater than %(max_size)s")
+    message = translation.gettext_lazy('File is greater than %(max_size)s')
 
-    error_code = "max_size_error"
+    error_code = 'max_size_error'
 
     def __init__(self, message=None, error_code=None, max_size=None) -> None:
         if message is not None:
@@ -179,7 +185,7 @@ class MaxSizeValidator(object):
             max_size = self.max_size
         if file.size > max_size:
             raise exceptions.ValidationError(
-                self.message,
-                code=self.error_code,
-                params={"max_size": str(utils.convert_size(self.max_size))},
-            )
+                self.message, code=self.error_code, params={
+                    'max_size': str(
+                        utils.convert_size(
+                            self.max_size))})
