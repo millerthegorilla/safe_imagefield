@@ -26,7 +26,7 @@ logger = logging.getLogger('safe_imagefield')
 # TODO do I need to call the superclass of object in each validator init??
 
 class FileExtensionValidator(object):
-    message = translation.ugettext_lazy(
+    message = translation.gettext_lazy(
         "File extension '%(extension)s' is not allowed. "
         "Allowed extensions are: '%(allowed_extensions)s'."
     )
@@ -57,7 +57,7 @@ class FileExtensionValidator(object):
 
 
 class FileContentTypeValidator(object):
-    message = translation.ugettext_lazy(
+    message = translation.gettext_lazy(
         'File has invalid content-type. '
         'Maybe the file extension does not match the file content?'
     )
@@ -112,7 +112,7 @@ class FileContentTypeValidator(object):
 
 
 class AntiVirusValidator(object):
-    message = translation.ugettext_lazy('File is infected with %(virus)s.')
+    message = translation.gettext_lazy('File is infected with %(virus)s.')
 
     error_code = 'infected'
 
@@ -137,7 +137,7 @@ class AntiVirusValidator(object):
 
 class MediaIntegrityValidator(object):
     # error_detect can be 'default' or 'strict'
-    message = translation.ugettext_lazy('File failed integrity check! %(error)s')
+    message = translation.gettext_lazy('File failed integrity check! %(error)s')
 
     error_code = 'integrity_failure'
 
@@ -164,7 +164,7 @@ class MediaIntegrityValidator(object):
 
 
 class MaxSizeValidator(object):
-    message = translation.ugettext_lazy('File is greater than %(max_size)s')
+    message = translation.gettext_lazy('File is greater than %(max_size)s')
 
     error_code = 'max_size_error'
 
